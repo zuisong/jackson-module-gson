@@ -3,14 +3,11 @@ module com.fasterxml.jackson.datatype.jsonorg {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
 
-    // is this the package name
-    requires static json;
-    //^2015
-	requires static org.json;
+    requires static com.google.gson;
 
     exports com.fasterxml.jackson.datatype.gson;
 
     provides com.fasterxml.jackson.databind.Module with
-        com.fasterxml.jackson.datatype.gson.JsonOrgModule;
+            com.fasterxml.jackson.datatype.gson.GsonModule;
 
 }

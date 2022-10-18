@@ -5,15 +5,15 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-public class JsonArraySerializer extends JSONBaseSerializer<JsonArray> {
-    private static final long serialVersionUID = 1L;
-
+public class JsonArraySerializer extends JsonBaseSerializer<JsonArray> {
     public final static JsonArraySerializer instance = new JsonArraySerializer();
+    private static final long serialVersionUID = 1L;
 
     public JsonArraySerializer() {
         super(JsonArray.class);
@@ -32,11 +32,11 @@ public class JsonArraySerializer extends JSONBaseSerializer<JsonArray> {
     }
 
     @Override
-    public void serializeWithType(JsonArray value, JsonGenerator g, SerializerProvider provider,
+    public void serializeWithType(JsonArray value, JsonGenerator g,
+                                  SerializerProvider provider,
                                   TypeSerializer typeSer) throws IOException {
         g.setCurrentValue(value);
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, JsonToken.START_ARRAY));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, typeSer.typeId(value, JsonToken.START_ARRAY));
         serializeContents(value, g, provider);
         typeSer.writeTypeSuffix(g, typeIdDef);
     }
@@ -51,45 +51,7 @@ public class JsonArraySerializer extends JSONBaseSerializer<JsonArray> {
             throws IOException {
         for (int i = 0, len = value.size(); i < len; ++i) {
             JsonElement ob = value.get(i);
-            serializeJsonElement(ob, g, provider);
-        }
-    }
-
-
-    static void serializeJsonElement(JsonElement value, JsonGenerator g, SerializerProvider provider)
-            throws IOException {
-        JsonElement ob = value;
-        if (ob.isJsonNull()) {
-            g.writeNull();
-        }
-        if (ob.isJsonObject()) {
-            JsonObjectSerializer.instance.serialize(ob.getAsJsonObject(), g, provider);
-        }
-        if (ob.isJsonArray()) {
-            JsonArraySerializer.instance.serialize((JsonArray) ob, g, provider);
-        }
-        if (ob.isJsonPrimitive()) {
-
-            final JsonPrimitive ob1 = ob.getAsJsonPrimitive();
-
-            if (ob1.isBoolean()) {
-                g.writeBoolean(ob1.getAsBoolean());
-            }
-
-            if (ob1.isString()) {
-                g.writeString(ob1.getAsString());
-            }
-
-            if (ob1.isNumber()) {
-                final Number num = ob1.getAsNumber();
-                final Class<? extends Number> cls = num.getClass();
-                if (cls == Long.class) {
-                    g.writeNumber(num.longValue());
-                }
-                if (cls == Double.class) {
-                    g.writeNumber(num.doubleValue());
-                }
-            }
+            JsonElementSerializer.instance.serialize(ob, g, provider);
         }
     }
 }

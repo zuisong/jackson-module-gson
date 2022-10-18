@@ -5,17 +5,17 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
 
-public class JsonObjectSerializer extends JSONBaseSerializer<JsonObject> {
-    private static final long serialVersionUID = 1L;
-
+public class JsonObjectSerializer extends JsonBaseSerializer<JsonObject> {
     public final static JsonObjectSerializer instance = new JsonObjectSerializer();
+    private static final long serialVersionUID = 1L;
 
     public JsonObjectSerializer() {
         super(JsonObject.class);
@@ -57,15 +57,8 @@ public class JsonObjectSerializer extends JSONBaseSerializer<JsonObject> {
         while (it.hasNext()) {
             final Map.Entry<String, JsonElement> entry = it.next();
             String key = entry.getKey();
-            JsonElement ob = entry.getValue();
-            if (ob == null || ob == JsonNull.INSTANCE) {
-                if (provider.isEnabled(SerializationFeature.WRITE_NULL_MAP_VALUES)) {
-                    g.writeNullField(key);
-                }
-                continue;
-            }
             g.writeFieldName(key);
-            JsonArraySerializer.serializeJsonElement(ob, g, provider);
+            JsonElementSerializer.instance.serialize(entry.getValue(), g, provider);
         }
     }
 }
