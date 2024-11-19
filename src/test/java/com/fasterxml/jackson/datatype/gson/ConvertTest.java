@@ -1,8 +1,7 @@
-package com.fasterxml.jackson.datatype.Jsonorg;
+package com.fasterxml.jackson.datatype.gson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.datatype.gson.ModuleTestBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.Test;

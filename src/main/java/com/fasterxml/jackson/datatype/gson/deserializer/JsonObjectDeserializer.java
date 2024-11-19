@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.gson;
+package com.fasterxml.jackson.datatype.gson.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.databind.util.ClassUtil;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;

@@ -18,7 +18,7 @@ Step 2. Add the dependency
 <dependency>
     <groupId>com.github.zuisong</groupId>
     <artifactId>jackson-module-gson</artifactId>
-    <version>9de392d024</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 

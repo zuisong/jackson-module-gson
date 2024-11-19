@@ -1,16 +1,18 @@
-package com.fasterxml.jackson.datatype.gson;
+package com.fasterxml.jackson.datatype.gson.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.google.gson.*;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
-public class JsonElementSerializer extends JsonBaseSerializer<JsonElement> {
+public class JsonElementSerializer extends StdSerializer<JsonElement> {
     public final static JsonElementSerializer instance = new JsonElementSerializer();
     private static final long serialVersionUID = 1L;
 
@@ -42,19 +44,18 @@ public class JsonElementSerializer extends JsonBaseSerializer<JsonElement> {
 
     public void serializeContents(JsonElement value, JsonGenerator g, SerializerProvider provider)
             throws IOException {
-        JsonElement ob = value;
-        if (ob.isJsonNull()) {
+        if (value.isJsonNull()) {
             g.writeNull();
         }
-        if (ob.isJsonObject()) {
-            JsonObjectSerializer.instance.serialize(ob.getAsJsonObject(), g, provider);
+        if (value.isJsonObject()) {
+            JsonObjectSerializer.instance.serialize(value.getAsJsonObject(), g, provider);
         }
-        if (ob.isJsonArray()) {
-            JsonArraySerializer.instance.serialize((JsonArray) ob, g, provider);
+        if (value.isJsonArray()) {
+            JsonArraySerializer.instance.serialize((JsonArray) value, g, provider);
         }
-        if (ob.isJsonPrimitive()) {
+        if (value.isJsonPrimitive()) {
 
-            final JsonPrimitive ob1 = ob.getAsJsonPrimitive();
+            final JsonPrimitive ob1 = value.getAsJsonPrimitive();
 
             if (ob1.isBoolean()) {
                 g.writeBoolean(ob1.getAsBoolean());

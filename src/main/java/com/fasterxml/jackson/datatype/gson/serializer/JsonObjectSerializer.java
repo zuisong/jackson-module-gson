@@ -1,15 +1,15 @@
-package com.fasterxml.jackson.datatype.gson;
+package com.fasterxml.jackson.datatype.gson.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
-public class JsonObjectSerializer extends JsonBaseSerializer<JsonObject> {
+public class JsonObjectSerializer extends StdSerializer<JsonObject> {
     public final static JsonObjectSerializer instance = new JsonObjectSerializer();
     private static final long serialVersionUID = 1L;
 
@@ -32,9 +32,7 @@ public class JsonObjectSerializer extends JsonBaseSerializer<JsonObject> {
 
     protected void serializeContents(JsonObject value, JsonGenerator g, SerializerProvider provider)
             throws IOException {
-        Iterator<java.util.Map.Entry<String, com.google.gson.JsonElement>> it = value.entrySet().iterator();
-        while (it.hasNext()) {
-            final Map.Entry<String, JsonElement> entry = it.next();
+        for (Map.Entry<String, JsonElement> entry : value.entrySet()) {
             String key = entry.getKey();
             g.writeFieldName(key);
             JsonElementSerializer.instance.serialize(entry.getValue(), g, provider);
