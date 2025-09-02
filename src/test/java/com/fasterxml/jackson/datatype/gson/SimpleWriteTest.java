@@ -1,10 +1,17 @@
 package com.fasterxml.jackson.datatype.gson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class SimpleWriteTest extends ModuleTestBase
 {
+    @Test
     public void testWriteObject() throws Exception
     {
         final ObjectMapper mapper = newMapper();
@@ -20,6 +27,7 @@ public class SimpleWriteTest extends ModuleTestBase
         assertEquals(JSON, mapper.writeValueAsString(ob));
     }
 
+    @Test
     public void testWriteArray() throws Exception
     {
         final ObjectMapper mapper = newMapper();
@@ -27,6 +35,27 @@ public class SimpleWriteTest extends ModuleTestBase
         // Ok: let's create JSONObject from JSON text
         String JSON = "[1,true,\"text\",[null,3],{\"a\":[1.25]}]";
         JsonArray ob = JsonParser.parseString(JSON).getAsJsonArray();
+        assertEquals(JSON, mapper.writeValueAsString(ob));
+    }
+
+    @Test
+    public void testWriteJsonPrimitive() throws Exception {
+        final ObjectMapper mapper = newMapper();
+
+        String JSON = "true";
+        JsonPrimitive ob = JsonParser.parseString(JSON).getAsJsonPrimitive();
+        assertEquals(JSON, mapper.writeValueAsString(ob));
+
+        JSON = "false";
+        ob = JsonParser.parseString(JSON).getAsJsonPrimitive();
+        assertEquals(JSON, mapper.writeValueAsString(ob));
+
+        JSON = "1.25";
+        ob = JsonParser.parseString(JSON).getAsJsonPrimitive();
+        assertEquals(JSON, mapper.writeValueAsString(ob));
+
+        JSON = "-1";
+        ob = JsonParser.parseString(JSON).getAsJsonPrimitive();
         assertEquals(JSON, mapper.writeValueAsString(ob));
     }
 }

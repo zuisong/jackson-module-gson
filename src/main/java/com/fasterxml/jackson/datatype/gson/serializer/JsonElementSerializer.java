@@ -1,16 +1,15 @@
 package com.fasterxml.jackson.datatype.gson.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class JsonElementSerializer extends StdSerializer<JsonElement> {
     public final static JsonElementSerializer instance = new JsonElementSerializer();
@@ -31,38 +30,47 @@ public class JsonElementSerializer extends StdSerializer<JsonElement> {
         serializeContents(value, g, provider);
     }
 
-    @Override
-    public void serializeWithType(JsonElement value, JsonGenerator g, SerializerProvider provider,
-                                  TypeSerializer typeSer) throws IOException {
-        g.setCurrentValue(value);
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, JsonToken.START_OBJECT));
-        serializeContents(value, g, provider);
-        typeSer.writeTypeSuffix(g, typeIdDef);
-
-    }
-
-    public void serializeContents(JsonElement value, JsonGenerator g, SerializerProvider provider)
+    private void serializeContents(JsonElement value, JsonGenerator g, SerializerProvider provider)
             throws IOException {
         if (value.isJsonNull()) {
             g.writeNull();
+            return;
         }
         if (value.isJsonObject()) {
-            JsonObjectSerializer.instance.serialize(value.getAsJsonObject(), g, provider);
+            JsonObject value1 = value.getAsJsonObject();
+            g.writeStartObject(value);
+            for (Map.Entry<String, JsonElement> entry : value1.entrySet()) {
+                String key = entry.getKey();
+                g.writeFieldName(key);
+                serializeContents(entry.getValue(), g, provider);
+            }
+            g.writeEndObject();
+            return;
         }
+
         if (value.isJsonArray()) {
-            JsonArraySerializer.instance.serialize((JsonArray) value, g, provider);
+            JsonArray value1 = value.getAsJsonArray();
+            g.writeStartArray();
+            for (int i = 0, len = value1.size(); i < len; ++i) {
+                JsonElement ob = value1.get(i);
+                serializeContents(ob, g, provider);
+            }
+            g.writeEndArray();
+            return;
         }
+
         if (value.isJsonPrimitive()) {
 
             final JsonPrimitive ob1 = value.getAsJsonPrimitive();
 
             if (ob1.isBoolean()) {
                 g.writeBoolean(ob1.getAsBoolean());
+                return;
             }
 
             if (ob1.isString()) {
                 g.writeString(ob1.getAsString());
+                return;
             }
 
             if (ob1.isNumber()) {

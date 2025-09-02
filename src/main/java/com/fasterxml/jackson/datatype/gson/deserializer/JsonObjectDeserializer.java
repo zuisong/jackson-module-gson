@@ -27,26 +27,13 @@ public class JsonObjectDeserializer extends StdDeserializer<JsonObject> {
     @Override
     public JsonObject deserialize(JsonParser p, DeserializationContext ctxt)
             throws IOException {
-
-
         if (!p.isExpectedStartObjectToken()) {
             final JsonToken t = p.currentToken();
             return (JsonObject) ctxt.handleUnexpectedToken(handledType(), t, p,
                     "Unexpected token (%s), expected START_OBJECT for %s value",
                     t, ClassUtil.nameOf(handledType()));
         }
+        return JsonElementDeserializer.instance.deserialize(p, ctxt).getAsJsonObject();
 
-        JsonObject ob = new JsonObject();
-        JsonToken t = p.getCurrentToken();
-        if (t == JsonToken.START_OBJECT) {
-            t = p.nextToken();
-        }
-
-        for (; t == JsonToken.FIELD_NAME; t = p.nextToken()) {
-            String fieldName = p.getCurrentName();
-            t = p.nextToken();
-            ob.add(fieldName, JsonElementDeserializer.instance.deserialize(p, ctxt));
-        }
-        return ob;
     }
 }

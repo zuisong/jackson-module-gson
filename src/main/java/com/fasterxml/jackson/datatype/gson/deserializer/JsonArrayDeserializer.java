@@ -33,12 +33,6 @@ public class JsonArrayDeserializer extends StdDeserializer<JsonArray> {
                     "Unexpected token (%s), expected START_ARRAY for %s value",
                     t, ClassUtil.nameOf(handledType()));
         }
-
-        JsonArray array = new JsonArray();
-        JsonToken t;
-        while ((t = p.nextToken()) != JsonToken.END_ARRAY) {
-            array.add(JsonElementDeserializer.instance.deserialize(p, ctxt));
-        }
-        return array;
+        return JsonElementDeserializer.instance.deserialize(p, ctxt).getAsJsonArray();
     }
 }

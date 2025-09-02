@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.type.LogicalType;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 
 import java.io.IOException;
 
@@ -29,14 +26,23 @@ public class JsonElementDeserializer extends StdDeserializer<JsonElement> {
     @Override
     public JsonElement deserialize(JsonParser p, DeserializationContext ctxt)
             throws IOException {
-        JsonToken t = p.getCurrentToken();
 
         try {
-            switch (t) {
+            switch (p.getCurrentToken()) {
                 case START_ARRAY:
-                    return JsonArrayDeserializer.instance.deserialize(p, ctxt);
+                    JsonArray array = new JsonArray();
+                    while (p.nextToken() != JsonToken.END_ARRAY) {
+                        array.add(deserialize(p, ctxt));
+                    }
+                    return array;
                 case START_OBJECT:
-                    return JsonObjectDeserializer.instance.deserialize(p, ctxt);
+                    JsonObject ob = new JsonObject();
+                    for (JsonToken t = p.nextToken(); t == JsonToken.FIELD_NAME; t = p.nextToken()) {
+                        String fieldName = p.getCurrentName();
+                        p.nextToken();
+                        ob.add(fieldName, deserialize(p, ctxt));
+                    }
+                    return ob;
                 case VALUE_STRING:
                 case VALUE_EMBEDDED_OBJECT:
                     return new JsonPrimitive(p.getText());

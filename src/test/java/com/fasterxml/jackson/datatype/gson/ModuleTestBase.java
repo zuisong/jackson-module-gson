@@ -1,11 +1,11 @@
 package com.fasterxml.jackson.datatype.gson;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-public abstract class ModuleTestBase extends junit.framework.TestCase
+import java.util.Arrays;
+
+public abstract class ModuleTestBase
 {
     public ObjectMapper newMapper() {
         return new ObjectMapper()
